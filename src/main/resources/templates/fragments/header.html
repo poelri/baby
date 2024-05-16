@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<div class="site-navbar bg-white py-2" th:fragment="header">
+    <div class="header-wrapper">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-2 col-sm-4 col-md-2 col-xs-12">
+                    <div class="logo">
+                        <a href="/"><img src="./images/logo.png" class="img-responsive" alt=""></a>
+                    </div>
+                </div>
+                <div class="col-lg-8 col-md-10 col-sm-8 col-xs-12">
+                    <div class="navigation-wrapper">
+                        <div id="navigation">
+                            <ul>
+                                <li class="active"><a href="/" title="">Home</a></li>
+
+                                <li><a href="about.html" title="">회사소개</a> </li>
+                                <li class="active"><a href="/" title="">서비스안내</a></li>
+
+                                <li class="has-sub"><a href="#" title="">구인게시판</a>
+                                    <ul>
+                                        <li><a href="/incruitPost/new" title="">채용등록</a></li>
+                                        <li><a href="courses-single.html" title="">채용정보 </a></li>
+                                    </ul>
+                                </li>
+
+                                <li class="has-sub"><a href="#" title="">구직게시판</a>
+                                    <ul>
+                                        <li><a href="/jobPost/new" title="">헬퍼등록</a></li>
+                                        <li><a href="/jobPost/jobList" title="">헬퍼정보</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="/members/login" sec:authorize="isAnonymous()">로그인</a></li>
+                                <li><a href="/members/logout" sec:authorize="isAuthenticated()">로그아웃</a></li>
+                                <li><a href="/members/new" sec:authorize="isAnonymous()">회원가입</a> </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- header-close -->
+</div>
+</html>
