@@ -1,14 +1,13 @@
 package com.baby.repository;
 
-import com.baby.constant.JobGender;
+import com.baby.constant.IncruitGender;
 import com.baby.dto.PostSearchDto;
-import com.baby.entity.JobPost;
-import com.baby.entity.QJobPost;
+import com.baby.entity.IncruitPost;
+import com.baby.entity.QIncruitPost;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -17,10 +16,10 @@ import org.thymeleaf.util.StringUtils;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class JobPostRepositoryCustomImpl implements JobPostRepositoryCustom{
+public class IncruitPostRepositoryCustomImpl implements IncruitPostRepositoryCustom {
     private JPAQueryFactory queryFactory;
 
-    public JobPostRepositoryCustomImpl(EntityManager em) { // 생성자 방식으로 의존성 주입
+    public IncruitPostRepositoryCustomImpl(EntityManager em) { // 생성자 방식으로 의존성 주입
         this.queryFactory = new JPAQueryFactory(em);
     }
 
@@ -40,18 +39,18 @@ public class JobPostRepositoryCustomImpl implements JobPostRepositoryCustom{
             dateTime = dateTime.minusMonths(6);
         }
 
-        return QJobPost.jobPost.regDate.after(dateTime); // 몇일전 이후부터
+        return QIncruitPost.incruitPost.regDate.after(dateTime); // 몇일전 이후부터
     }
     //상태를 전체로 했을때 null이 들어있으므로 처리를 한번 해준다
-    private BooleanExpression jobGenderEq(JobGender jobGender) {
-        return jobGender == null ? null : QJobPost.jobPost.jobGender.eq(jobGender);
+    private BooleanExpression incruitGenderEq(IncruitGender incruitGender) {
+        return incruitGender== null ? null : QIncruitPost.incruitPost.incruitGender.eq(incruitGender);
     }
 
     private BooleanExpression searchByLike(String searchBy, String searchQuery) {
         if(StringUtils.equals("title", searchBy)) { // 타이틀 검색
-            return QJobPost.jobPost.jobTitle.like("%" + searchQuery + "%");
+            return QIncruitPost.incruitPost.incruitTitle.like("%" + searchQuery + "%");
         } else if (StringUtils.equals("createdBy", searchQuery)) { // 등록자 검색시
-            return QJobPost.jobPost.createdBy.like("%" + searchQuery + "%");
+            return QIncruitPost.incruitPost.createdBy.like("%" + searchQuery + "%");
         }
         return null;
     }
@@ -60,20 +59,20 @@ public class JobPostRepositoryCustomImpl implements JobPostRepositoryCustom{
 
 
     @Override
-    public Page<JobPost> getAdminPostPage(PostSearchDto postSearchDto, Pageable pageable) {
-        List<JobPost> content = queryFactory
-                .selectFrom(QJobPost.jobPost)
+    public Page<IncruitPost> getAdminPostPage(PostSearchDto postSearchDto, Pageable pageable) {
+        List<IncruitPost> content = queryFactory
+                .selectFrom(QIncruitPost.incruitPost)
                 .where(regDtsAfter(postSearchDto.getSearchDateType()),
-                        jobGenderEq(postSearchDto.getJobGender()),
+                        incruitGenderEq(postSearchDto.getIncruitGender()),
                         searchByLike(postSearchDto.getSearchBy(), postSearchDto.getSearchQuery()))
-                .orderBy(QJobPost.jobPost.id.desc())
+                .orderBy(QIncruitPost.incruitPost.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        long total = queryFactory.select(Wildcard.count).from(QJobPost.jobPost)
+        long total = queryFactory.select(Wildcard.count).from(QIncruitPost.incruitPost)
                 .where(regDtsAfter(postSearchDto.getSearchDateType()),
-                        jobGenderEq(postSearchDto.getJobGender()),
+                        incruitGenderEq(postSearchDto.getIncruitGender()),
                         searchByLike(postSearchDto.getSearchBy(), postSearchDto.getSearchQuery()))
                 .fetchOne();
 
@@ -83,9 +82,8 @@ public class JobPostRepositoryCustomImpl implements JobPostRepositoryCustom{
 
 
     private  BooleanExpression titleLike(String searchQuery){
-        return StringUtils.isEmpty(searchQuery)  ? null : QJobPost.jobPost.jobTitle.like("%"+searchQuery+"%");
+        return StringUtils.isEmpty(searchQuery)  ? null : QIncruitPost.incruitPost.incruitTitle.like("%"+searchQuery+"%");
     }
-
 
 
 }

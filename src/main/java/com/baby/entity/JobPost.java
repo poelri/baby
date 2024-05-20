@@ -51,14 +51,15 @@ public class JobPost extends BaseEntity{
 
     private String introduce; // 자기소개
 
-    public void updateJobPost(JobPostFormDto jobPostFormDto){
-        this.id = jobPostFormDto.getId();
-        this.jobTitle = jobPostFormDto.getJobTitle();
-        this.jobGender = jobPostFormDto.getJobGender();
-        this.jobAge = jobPostFormDto.getJobAge();
-        this.career = jobPostFormDto.getCareer();
-        this.jobTime = jobPostFormDto.getJobTime();
-        this.introduce = jobPostFormDto.getIntroduce();
+    public void updateJobPost(JobPost jobPost){
+        this.jobTitle = jobPost.getJobTitle();
+        this.jobGender = jobPost.getJobGender();
+        this.jobAge = jobPost.getJobAge();
+        this.career = jobPost.getCareer();
+        this.jobTime = jobPost.getJobTime();
+        this.introduce = jobPost.getIntroduce();
+        this.jobDays = jobPost.getJobDays();
+        this.member = jobPost.getMember();
     }
 
 

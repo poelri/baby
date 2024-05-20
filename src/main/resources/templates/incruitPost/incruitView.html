@@ -4,15 +4,218 @@
       layout:decorate="~{layouts/layout1}"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
+    <!--헤더이 있는 토큰 값이 이거임 ! ! -->
     <meta name="_csrf" th:content="${_csrf.token}" />
     <meta name="_csrf_header" th:content="${_csrf.headerName}" />
 </head>
+
+
 <div layout:fragment="content">
+    <div class="sub_head">
+        <span class="sub_head_title1">채용정보</span> <span>USE GUIDE</span>
+        <!--        <span class="sub_head_title2">USE GUIDE</span>-->
+    </div>
+
+    <div style="text-align: -webkit-center;">
+
+        <!--    <input type="hidden" id="postId" th:value="${jobPost.id}"/>-->
+        <div class="box2">
+            <div class="info">
+                <div class="incruit_box1">
+                    <span class="incruit_title">제목</span>
+                </div>
+                <div class="reInfoBox">
+                    <span th:text="${incruitPost.incruitTitle}"> </span>
+                </div>
+            </div>
+            <hr>
+            <div class="info">
+                <div class="incruit_box1">
+                    <span class="incruit_title" >성별</span>
+                </div>
+                <div class="reInfoBox">
+                    <span th:text="${incruitPost.jobGender}"> </span>
+                </div>
+            </div>
+            <hr>
+            <div class="info">
+                <div class="incruit_box1">
+                    <span class="incruit_title">국적</span>
+                </div>
+                <div class="reInfoBox">
+                    <span th:text="${incruitPost.country}" ></span>
+                </div>
+            </div>
+            <hr>
+            <div class="info">
+                <div class="incruit_box1">
+                    <span class="incruit_title">연령</span>
+                </div>
+                <div class="reInfoBox">
+                    <span th:text="${incruitPost.jobAge}" > </span>
+                </div>
+            </div>
+            <hr>
+            <div class="info">
+                <div class="incruit_box1">
+                    <span class="incruit_title">아이의 성별</span>
+                </div>
+                <div class="reInfoBox">
+                    <span th:text="${incruitPost.incruitGender}" ></span>
+                </div>
+            </div>
+            <hr>
+            <div class="info">
+                <div class="incruit_box1">
+                    <span class="incruit_title">아이의 연령</span>
+                </div>
+                <div class="reInfoBox">
+                    <span th:text="${incruitPost.incruitAge}" ></span>
+                </div>
+            </div>
+            <hr>
+            <div class="info">
+                <div class="incruit_box1">
+                    <span class="incruit_title">반려동물</span>
+                </div>
+                <div class="reInfoBox">
+                    <span th:text="${incruitPost.pet}" ></span>
+                </div>
+            </div>
+            <hr>
+            <div class="info">
+                <div class="incruit_box1">
+                    <span class="incruit_title">CCTV</span>
+                </div>
+                <div class="reInfoBox">
+                    <span th:text="${incruitPost.cctv}" ></span>
+                </div>
+            </div>
+            <hr>
+            <div class="info">
+                <div class="incruit_box1">
+                    <span class="incruit_title">근무지역</span>
+                </div>
+                <div class="reInfoBox">
+                    <span th:text="${incruitPost.location}" ></span>
+                </div>
+            </div>
+            <hr>
+            <div class="info">
+                <div class="incruit_box1">
+                    <span class="incruit_title">희망 근무 요일</span>
+                </div>
+                <div class="reInfoBox" id="incruitDaysContainer">
+                    <!-- 여기에 JavaScript를 통해 요일을 출력 -->
+                </div>
+                <th:block th:if="${incruitPost.incruitDays}">
+                    <script th:inline="javascript">
+                        var incruitDays = [[${incruitPost.incruitDays}]];
+                    </script>
+                </th:block>
+            </div>
+            <hr>
+            <div class="info">
+                <div class="incruit_box1">
+                    <span class="incruit_title">희망 근무시간</span>
+                </div>
+                <div class="reInfoBox">
+                    <span th:text="${incruitPost.incruitTime}" ></span>
+                </div>
+            </div>
+            <hr>
+            <div class="info">
+                <div class="incruit_box1">
+                    <span class="incruit_title">시급</span>
+                </div>
+                <div class="reInfoBox">
+                    <span th:text="${incruitPost.incruitMoney}" ></span>
+                </div>
+            </div>
+            <hr>
+
+
+            <div class="tags-share-box center-box d-flex text-center justify-content-between border-top border-bottom py-3">
+                <span class="single-comment-o"><i class="fa fa-comment-o"></i></span>
+                <div class="list-posts-share">
+                    <th:block th:if="${#strings.equals(incruitPost.createdBy, memberId)}">
+                        <a style="cursor:pointer;" th:href="'/incruitPost/' + ${incruitPost.id}">수정</a>
+                        <a style="cursor:pointer;"  th:value="${incruitPost.id}"
+                           th:onclick="'deleteIncruitPost(' + ${incruitPost.id} + ')'">삭제</a>
+                    </th:block>
+                </div>
+            </div>
+
+        </div>
+
+
+
+    </div>
+
 
 </div>
 <th:block layout:fragment="script">
     <script th:inline="javascript">
 
+        function displayIncruitDays(incruitDays) {
+           const container = document.getElementById('incruitDaysContainer');
+           container.innerHTML = '';
+
+           incruitDays.forEach((day, index) => {
+               container.innerHTML += day.day;
+               if (index < incruitDays.length - 1) {
+                   container.innerHTML += ', ';
+               }
+           });
+       }
+
+       // incruitDays 배열이 존재하면 displayIncruitDays 함수 호출
+       if (typeof incruitDays !== 'undefined') {
+           displayIncruitDays(incruitDays);
+       }
+
+
+       function deleteIncruitPost(incruitId) {
+                   const deleteConf = confirm("포스트를 삭제하시겠습니까?");
+                   if(!deleteConf) return; //취소버튼 선택시
+
+                   var token = $("meta[name='_csrf']").attr("content");
+                   var header = $("meta[name='_csrf_header']").attr("content");
+
+                   $.ajax({
+                     url : "/incruitPost/delete/" + incruitId,
+                     type : "DELETE",
+                     contentType : "application/json",
+                     beforeSend : function(xhr) {
+                       //데이터를 전송하기 전에 헤더에 csrf 값을 설정
+                       xhr.setRequestHeader(header, token);
+                     },
+                     dataType : "json",
+                     cache : false,
+                     success : function(result, status) {
+                       // var path = location.pathname; // '/incruitPost/incruitList/0'
+                       //
+                       // //페이지 번호만 가져옴
+                       // var page = path.substring(path.lastIndexOf("/") + 1);
+                       //
+                       // //사이트 nav 메뉴를 클릭하고 들어왔을때를 대비
+                       // if(page == 'incruitPost/incruitList') {
+                       //   page = 0;
+                       // }
+
+                       //주문취소 후에 원래 페이지로 이동시켜준다.
+                       location.href = '/incruitPost/incruitList';
+                     },
+                     error : function(jqXHR, status, error) {
+                       if(jqXHR.status == '401') {
+                         alert('로그인 후 이용해주세요.');
+                         location.href = '/members/login';
+                       } else {
+                         alert(jqXHR.responseText);
+                       }
+                     }
+                   });
+                   }
     </script>
 </th:block>
 </html>

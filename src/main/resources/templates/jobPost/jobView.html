@@ -4,148 +4,148 @@
       layout:decorate="~{layouts/layout1}"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <!--헤더이 있는 토큰 값이 이거임 ! ! -->
+    <!--헤더에 있는 토큰 값 설정-->
     <meta name="_csrf" th:content="${_csrf.token}" />
     <meta name="_csrf_header" th:content="${_csrf.headerName}" />
 </head>
-
-
+<body>
 <div layout:fragment="content">
     <div class="sub_head">
         <span class="sub_head_title1">헬퍼정보</span> <span>USE GUIDE</span>
-        <!--        <span class="sub_head_title2">USE GUIDE</span>-->
     </div>
     <div style="text-align: -webkit-center;">
-
-<!--    <input type="hidden" id="postId" th:value="${jobPost.id}"/>-->
-    <div class="box2">
-        <div class="info">
-            <div class="incruit_box1">
-                <span class="incruit_title">제목</span>
+        <div class="box2">
+            <div class="info">
+                <div class="incruit_box1">
+                    <span class="incruit_title">제목</span>
+                </div>
+                <div class="reInfoBox">
+                    <span th:text="${jobPost.jobTitle}"> </span>
+                </div>
             </div>
-            <div class="reInfoBox">
-               <span th:text="${jobPost.jobTitle}"> </span>
+            <hr>
+            <div class="info">
+                <div class="incruit_box1">
+                    <span class="incruit_title">성별</span>
+                </div>
+                <div class="reInfoBox">
+                    <span th:text="${jobPost.jobGender}"> </span>
+                </div>
             </div>
-        </div>
-        <hr>
-        <div class="info">
-            <div class="incruit_box1">
-                <span class="incruit_title" >성별</span>
+            <hr>
+            <div class="info">
+                <div class="incruit_box1">
+                    <span class="incruit_title">연령</span>
+                </div>
+                <div class="reInfoBox">
+                    <span th:text="${jobPost.jobAge}"> </span>
+                </div>
             </div>
-            <div class="reInfoBox">
-                <span th:text="${jobPost.jobGender}"> </span>
+            <hr>
+            <div class="info">
+                <div class="incruit_box1">
+                    <span class="incruit_title">경력</span>
+                </div>
+                <div class="reInfoBox">
+                    <span th:text="${jobPost.career}"></span>
+                </div>
             </div>
-        </div>
-        <hr>
-        <div class="info">
-            <div class="incruit_box1">
-                <span class="incruit_title">연령</span>
+            <hr>
+            <div class="info">
+                <div class="incruit_box1">
+                    <span class="incruit_title">희망 근무시간</span>
+                </div>
+                <div class="reInfoBox">
+                    <span th:text="${jobPost.jobTime}"></span>
+                </div>
             </div>
-            <div class="reInfoBox">
-                <span th:text="${jobPost.jobAge}" > </span>
-            </div>
-        </div>
-        <hr>
-        <div class="info">
-            <div class="incruit_box1">
-                <span class="incruit_title">경력</span>
-            </div>
-            <div class="reInfoBox">
-                <span th:text="${jobPost.career}" ></span>
-            </div>
-        </div>
-        <hr>
-        <div class="info">
-            <div class="incruit_box1">
-                <span class="incruit_title">희망 근무시간</span>
-            </div>
-            <div class="reInfoBox">
-                <span th:text="${jobPost.jobTime}" ></span>
-            </div>
-        </div>
-        <hr>
-        <div class="info">
-            <div class="incruit_box1">
-                <span class="incruit_title">희망 근무 요일</span>
-            </div>
-            <div class="reInfoBox">
-                <th:block th:each="day : ${jobPost.jobDays}"><span th:text="${day.day}" ></span> <span>, </span></th:block>
-            </div>
-        </div>
-        <hr>
-        <div class="info2">
-            <div class="incruit_box1" style="margin-bottom: 3rem;">
-                <span class="incruit_title" >자기소개</span>
-            </div>
-            <div class="reInfoBox" style="padding-left:2rem;">
-                <span th:text="${jobPost.introduce}"> </span>
-            </div>
-        </div>
-        <hr>
-
-        <div class="tags-share-box center-box d-flex text-center justify-content-between border-top border-bottom py-3">
-            <span class="single-comment-o"><i class="fa fa-comment-o"></i></span>
-            <div class="list-posts-share">
-                <th:block th:if="${#strings.equals(jobPost.createdBy, memberId)}">
-                    <a style="cursor:pointer;" th:href="'/jobPost/' + ${jobPost.id}">수정</a>
-                    <a style="cursor:pointer;"  th:value="${jobPost.id}"
-                       th:onclick="'deleteJobPost(' + ${jobPost.id} + ')'">삭제</a>
+            <hr>
+            <div class="info">
+                <div class="incruit_box1">
+                    <span class="incruit_title">희망 근무 요일</span>
+                </div>
+                <div class="reInfoBox" id="jobDaysContainer">
+                    <!-- 여기에 JavaScript를 통해 요일을 출력 -->
+                </div>
+                <th:block th:if="${jobPost.jobDays}">
+                    <script th:inline="javascript">
+                        var jobDays = [[${jobPost.jobDays}]];
+                    </script>
                 </th:block>
             </div>
+            <hr>
+            <div class="info2">
+                <div class="incruit_box1" style="margin-bottom: 3rem;">
+                    <span class="incruit_title">자기소개</span>
+                </div>
+                <div class="reInfoBox" style="padding-left:2rem;">
+                    <span th:text="${jobPost.introduce}"></span>
+                </div>
+            </div>
+            <hr>
+            <div class="tags-share-box center-box d-flex text-center justify-content-between border-top border-bottom py-3">
+                <span class="single-comment-o"><i class="fa fa-comment-o"></i></span>
+                <div class="list-posts-share">
+                    <th:block th:if="${#strings.equals(jobPost.createdBy, memberId)}">
+                        <a style="cursor:pointer;" th:href="'/jobPost/' + ${jobPost.id}">수정</a>
+                        <a style="cursor:pointer;" th:onclick="'deleteJobPost(' + ${jobPost.id} + ')'">삭제</a>
+                    </th:block>
+                </div>
+            </div>
         </div>
-
-    </div>
-
-
-
     </div>
 </div>
 
-
-
 <th:block layout:fragment="script">
     <script th:inline="javascript">
+        function displayJobDays(jobDays) {
+            const container = document.getElementById('jobDaysContainer');
+            container.innerHTML = '';
+
+            jobDays.forEach((day, index) => {
+                container.innerHTML += day.day;
+                if (index < jobDays.length - 1) {
+                    container.innerHTML += ', ';
+                }
+            });
+        }
+
+        // jobDays 배열이 존재하면 displayJobDays 함수 호출
+        if (typeof jobDays !== 'undefined') {
+            displayJobDays(jobDays);
+        }
+
         function deleteJobPost(jobId) {
-             const deleteConf = confirm("포스트를 삭제하시겠습니까?");
-             if(!deleteConf) return; //취소버튼 선택시
+            const deleteConf = confirm("포스트를 삭제하시겠습니까?");
+            if (!deleteConf) return; //취소 버튼 선택 시
 
-             var token = $("meta[name='_csrf']").attr("content");
-             var header = $("meta[name='_csrf_header']").attr("content");
+            const token = $("meta[name='_csrf']").attr("content");
+            const header = $("meta[name='_csrf_header']").attr("content");
 
-             $.ajax({
-               url : "/jobPost/delete/" + jobId,
-               type : "DELETE",
-               contentType : "application/json",
-               beforeSend : function(xhr) {
-                 //데이터를 전송하기 전에 헤더에 csrf 값을 설정
-                 xhr.setRequestHeader(header, token);
-               },
-               dataType : "json",
-               cache : false,
-               success : function(result, status) {
-                 // var path = location.pathname; // '/jobPost/jobList/0'
-                 //
-                 // //페이지 번호만 가져옴
-                 // var page = path.substring(path.lastIndexOf("/") + 1);
-                 //
-                 // //사이트 nav 메뉴를 클릭하고 들어왔을때를 대비
-                 // if(page == 'jobPost/jobList') {
-                 //   page = 0;
-                 // }
-
-                 //주문취소 후에 원래 페이지로 이동시켜준다.
-                 location.href = '/jobPost/jobList';
-               },
-               error : function(jqXHR, status, error) {
-                 if(jqXHR.status == '401') {
-                   alert('로그인 후 이용해주세요.');
-                   location.href = '/members/login';
-                 } else {
-                   alert(jqXHR.responseText);
-                 }
-               }
-             });
-             }
+            $.ajax({
+                url: "/jobPost/delete/" + jobId,
+                type: "DELETE",
+                contentType: "application/json",
+                beforeSend: function(xhr) {
+                    // 데이터 전송 전에 헤더에 csrf 값 설정
+                    xhr.setRequestHeader(header, token);
+                },
+                dataType: "json",
+                cache: false,
+                success: function(result, status) {
+                    location.href = '/jobPost/jobList';
+                },
+                error: function(jqXHR, status, error) {
+                    if (jqXHR.status == '401') {
+                        alert('로그인 후 이용해주세요.');
+                        location.href = '/members/login';
+                    } else {
+                        alert(jqXHR.responseText);
+                    }
+                }
+            });
+        }
     </script>
 </th:block>
+</body>
 </html>

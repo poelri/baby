@@ -5,14 +5,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
-@Table(name="job_day")
+@Table(name="incruit_day")
 @Setter
 @Getter
-public class JobDay {
+public class IncruitDay {
     @Id
-    @Column(name="job_day_id")
+    @Column(name="incruit_day_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 기본키 설정
     private Long id; // 게시글코드
 
@@ -20,21 +21,21 @@ public class JobDay {
     private Day day;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="job_id")
+    @JoinColumn(name="incruit_id")
     @JsonIgnore
-    private JobPost jobPost;
+    private IncruitPost incruitPost;
 
-    public JobDay() {
+    public IncruitDay() {
     }
 
-    public JobDay(JobPost jobPost, Day day) {
-        this.jobPost = jobPost;
+    public IncruitDay(IncruitPost incruitPost, Day day) {
+        this.incruitPost = incruitPost;
         this.day = day;
     }
 
     @Override
     public String toString() {
-        return "JobDay{" +
+        return "IncruitDay{" +
                 "id=" + id +
                 ", day=" + day +
                 "}";

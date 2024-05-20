@@ -30,33 +30,33 @@ public class JobPostController {
 
     private final JobPostService jobPostService;
     private final MemberRepository memberRepository;
-    private final JobPostRepository jobPostRepository;
 
     @GetMapping(value ="/jobPost/new")
     public String jobPostForm(Model model){
         model.addAttribute("jobPostFormDto", new JobPostFormDto());
         return "jobPost/jobWrite";
     }
-    
+
     // 게시물 등록 처리
     @PostMapping(value = "/jobPost/new")
-    public String jobPostNew(@Valid @RequestBody JobPostFormDto jobPostFormDto, Model model,
-                             BindingResult bindingResult){
+    public @ResponseBody ResponseEntity jobPostNew(@Valid @RequestBody JobPostFormDto jobPostFormDto, Model model,
+                                                   BindingResult bindingResult, Principal principal){
 
-        if(bindingResult.hasErrors()) return "jobPost/jobWrite";
-
+        if(bindingResult.hasErrors()) return new ResponseEntity<>("입력값이 올바르지 않습니다.", HttpStatus.BAD_REQUEST);
 
         try {
-//            Member member = memberRepository.findByEmail(principal.getName());
-//            jobPostFormDto.setMember(member);
-            jobPostService.saveJobPost(jobPostFormDto);
+            Member member = memberRepository.findByEmail(principal.getName());
+            jobPostFormDto.setMember(member);
+            Long jobId = jobPostService.saveJobPost(jobPostFormDto);
+
+            return new ResponseEntity<Long>(jobId, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("errorMessage",
                     "게시글 등록 중 에러가 발생했습니다.");
-            return "jobPost/jobWrite";
+            return new ResponseEntity<>("게시글 등록 중 에러가 발생했습니다.", HttpStatus.BAD_REQUEST);
         }
-        return "redirect:/";
+
     }
 
     // 게시물 수정 페이지 보기
@@ -80,22 +80,23 @@ public class JobPostController {
 
     // 게시물 수정(update)
     @PostMapping(value = "/jobPost/{jobId}")
-    public String jobPostUpdate(@Valid JobPostFormDto jobPostFormDto, Model model, BindingResult bindingResult,
-                             @PathVariable("jobId") Long jobId){
-        if(bindingResult.hasErrors()) return "jobPost/jobRewrite"; // 유효성 체크에서 걸리면
+    public @ResponseBody ResponseEntity jobPostUpdate(@Valid @RequestBody JobPostFormDto jobPostFormDto, Model model, BindingResult bindingResult,
+                                                      @PathVariable("jobId") Long jobId, Principal principal){
+        if(bindingResult.hasErrors()) return new ResponseEntity<>("입력값이 올바르지 않습니다.", HttpStatus.BAD_REQUEST);
 
         JobPostFormDto getJobPostFormDto = jobPostService.getJobPostDtl(jobId);
         try {
-            jobPostService.updateJobPost(jobPostFormDto);
+            jobPostFormDto.setId(jobId);
+            jobPostService.updateJobPost(jobPostFormDto, principal.getName());
+            return new ResponseEntity<Long>(jobId, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("errorMessage",
                     "상품 수정중 에러가 발생했습니다.");
             model.addAttribute("jobPostFormDto", getJobPostFormDto);
-            return "jobPost/jobRewrite";
+            return new ResponseEntity<>("게시글 수정 중 에러가 발생했습니다.", HttpStatus.BAD_REQUEST);
         }
 
-        return "redirect:/jobPost/jobList";
     }
 
     // 게시글 리스트 보기
@@ -115,7 +116,7 @@ public class JobPostController {
     // 포스트 상세 페이지
     @GetMapping(value = "/jobPost/jobView/{jobId}")
     public String jobPostView(Model model, @PathVariable("jobId") Long jobId,
-                           Principal principal){
+                              Principal principal){
         JobPostFormDto jobPostFormDto = jobPostService.getJobPostDtl(jobId);
         model.addAttribute("jobPost", jobPostFormDto);
         model.addAttribute("memberId", principal.getName());
@@ -127,7 +128,7 @@ public class JobPostController {
     //포스트 삭제
     @DeleteMapping(value = "/jobPost/delete/{jobId}")
     public @ResponseBody ResponseEntity deleteJobPost(@PathVariable(value = "jobId") Long jobId,
-                                                   Principal principal) {
+                                                      Principal principal) {
         if(!jobPostService.validateJobPost(jobId, principal.getName())) {
             return new ResponseEntity<String>("포스트 삭제 권한이 없습니다.",
                     HttpStatus.FORBIDDEN);

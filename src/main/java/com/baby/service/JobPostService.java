@@ -25,21 +25,23 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JobPostService {
     private final MemberRepository memberRepository;
-    private final JobDayRepository jobDayRepository;
     private final JobPostRepository jobPostRepository;
 
     // 테이블에 게시물등록
-    public Long saveJobPost(JobPostFormDto jobPostFormDto) throws Exception{
+    public Long saveJobPost(JobPostFormDto jobPostFormDto) throws Exception {
 
         JobPost jobPost = jobPostFormDto.createJobPost();
-        JobPost savedPost = jobPostRepository.save(jobPost); // insert
-        if(jobPostFormDto.getJobDays() != null){
-            for (JobDay jobDay : jobPostFormDto.getJobDays()) {
-                jobDay = new JobDay(savedPost, jobDay.getDay());
-                jobDayRepository.save(jobDay);
+
+        List<JobDay> jobDayList = new ArrayList<>();
+        for (JobDay jobDay : jobPostFormDto.getJobDays()) {
+            if (jobDay != null && jobDay.getDay() != null) {
+                jobDay = new JobDay(jobPost, jobDay.getDay());
+                jobDayList.add(jobDay);
             }
         }
-        return jobPost.getId();
+        jobPost.setJobDays(jobDayList);
+        JobPost savedPost = jobPostRepository.save(jobPost); // insert
+        return savedPost.getId();
     }
 
     // 게시글 가져오기
@@ -49,28 +51,39 @@ public class JobPostService {
     // DTL  디테일 ㅋㅋㅋㅋㅋㅋㅋ ㅋㅋㅋㅋ ㅋ ㅋ ㅋㅋㅋㅋ
     public JobPostFormDto getJobPostDtl(Long jobId) { // postId를 매개변수로 받아와서 넘겨주세여
         JobPost jobPost = jobPostRepository.findById(jobId).orElseThrow(EntityNotFoundException::new); // 에러야
-
-        List<JobDay> jobDays = jobDayRepository.findByJobPostIdOrderByIdAsc(jobId);
         // repository 에서 postId가 있나 없나 체크 해 !
         // 있으면 다음 코드 실행하고 없으면 에러코드 나오세요~
         // ex 통장에 돈이 있나 없나 체크하는 거랑 같아오
 
         // entity => dto
         // public static PostFormDto of(Post post) {  return modelMapper.map(post, PostFormDto.class);} 이거랑 같은 고야~
-        JobPostFormDto jobPostFormDto = JobPostFormDto.of(jobPost);
-        jobPostFormDto.setJobDays(jobDays);
-        return jobPostFormDto;
+        return JobPostFormDto.of(jobPost);
     }
 
     // 게시글 수정하기
-    public Long updateJobPost(JobPostFormDto jobPostFormDto) throws Exception {
+    public Long updateJobPost(JobPostFormDto jobPostFormDto, String email) throws Exception {
 
         JobPost jobPost  = jobPostRepository.findById(jobPostFormDto.getId())
                 .orElseThrow(EntityNotFoundException::new);
 
-        jobPost.updateJobPost(jobPostFormDto);
+        // 기존의 jobDays 컬렉션을 수정한다
+        List<JobDay> existingJobDays = jobPost.getJobDays();
+        existingJobDays.clear(); // 기존의 엔티티를 모두 제거
 
-        return jobPost.getId();// 변경한 post의 id 리턴
+        // 새로운 jobDays 엔티티를 추가한다
+        for (JobDay jd : jobPostFormDto.getJobDays()) {
+            if (jd != null && jd.getDay() != null) {
+                Day day = jd.getDay();
+                JobDay jobDay = new JobDay(jobPost, day);
+                existingJobDays.add(jobDay); // 기존의 컬렉션에 새로운 엔티티 추가
+            }
+        }
+        JobPost update = jobPostFormDto.createJobPost();
+        update.setJobDays(existingJobDays);
+        update.setMember(memberRepository.findByEmail(email));
+        jobPost.updateJobPost(update);
+
+        return jobPostRepository.save(update).getId();// 변경한 post의 id 리턴
     }
 
     public JobPost findById(Long id) throws Exception {

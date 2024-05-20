@@ -10,7 +10,6 @@
 
 </head>
 
-
 <main layout:fragment="content" class="main" style="text-align: -webkit-center;">
     <div class="sub_head">
         <span class="sub_head_title1">등록수정</span>
@@ -39,7 +38,7 @@
                         <div class="incruite_box2">
                             <ul class="horizontal-list">
                                 <li>
-                                    <label><input type="radio" class="jobGender" name="jobGender" value="FEMALE" checked="checked">여성</label>
+                                    <label><input type="radio" class="jobGender" name="jobGender" value="FEMALE">여성</label>
                                 </li>
                                 <li>
                                     <label><input type="radio" class="jobGender" name="jobGender" value="MALE">남성</label>
@@ -85,7 +84,7 @@
                         <div class="incruite_box2">
                             <ul class="horizontal-list">
                                 <li>
-                                    <label><input type="radio" checked="checked"  name="career" value="ZERO">신입</label>
+                                    <label><input type="radio" name="career" value="ZERO" checked="checked">신입</label>
                                 </li>
                                 <li>
                                     <label><input type="radio" name="career" value="ONE">1년이상</label>
@@ -116,19 +115,19 @@
                         <div class="incruite_box2">
                             <ul class="horizontal-list">
                                 <li>
-                                    <label><input type="checkbox" class="day" name="jobDays" value="MON" checked="checked" >월</label>
+                                    <label><input type="checkbox" class="day" name="jobDays" value="MON" checked="checked">월</label>
                                 </li>
                                 <li>
-                                    <label><input type="checkbox" class="day"  name="jobDays" value="TUES" checked="checked" >화</label>
+                                    <label><input type="checkbox" class="day"  name="jobDays" value="TUES" checked="checked">화</label>
                                 </li>
                                 <li>
-                                    <label><input type="checkbox" class="day"  name="jobDays" value="WED" checked="checked" >수</label>
+                                    <label><input type="checkbox" class="day"  name="jobDays" value="WED" checked="checked">수</label>
                                 </li>
                                 <li>
-                                    <label><input type="checkbox" class="day"  name="jobDays" value="THURS" checked="checked" >목</label>
+                                    <label><input type="checkbox" class="day"  name="jobDays" value="THURS" checked="checked">목</label>
                                 </li>
                                 <li>
-                                    <label><input type="checkbox"  class="day" name="jobDays" value="FRI" checked="checked" >금</label>
+                                    <label><input type="checkbox"  class="day" name="jobDays" value="FRI" checked="checked">금</label>
                                 </li>
                                 <li>
                                     <label><input type="checkbox" class="day" name="jobDays" value="SAT" >토</label>
@@ -148,7 +147,7 @@
                         <div class="incruite_box2">
                             <ul class="horizontal-list">
                                 <li>
-                                    <label><input type="radio"  name="jobTime" value="FULLTIME" checked>전일제 (10시 ~ 18시)</label>
+                                    <label><input type="radio"  name="jobTime" value="FULLTIME"  checked="checked" >전일제 (10시 ~ 18시)</label>
                                 </li>
                                 <li>
                                     <label><input type="radio"  name="jobTime" value="PARTTIMEONE">시간제1 (13시 ~ 17시)</label>
@@ -171,9 +170,7 @@
 
                     </li>
                     <br>
-
-
-                    <button class="btn btn-primary solid blank mt-3" type="submit" onclick="beforeSubmit(); return false;">
+                    <button class="btn btn-primary solid blank mt-3" type="button" onclick="beforeSubmit(); return false;">
                         수정하기
                     </button>
                 </ul>
@@ -189,37 +186,37 @@
     <!--    <script src="/js/rSlider.min.js"></script>-->
 
     <script  th:inline="javascript">
-
-        //에러메시지 출력
-        var errorMessage = [[${errorMessage}]];
-        if(errorMessage != null) alert(errorMessage);
-
-        var token = $("meta[name='_csrf']").attr("content");
-		var header = $("meta[name='_csrf_header']").attr("content");
-
         function beforeSubmit() {
 
             // 체크된 체크박스들의 값을 저장할 배열
             var checkedValues = [];
 
             // 체크된 체크박스들의 값을 배열에 추가
-            $('input[type="checkbox"]:checked').each(function() {
-                checkedValues.push($(this).val());
+                    $('input[type="checkbox"]:checked').each(function() {
+                        checkedValues.push($(this).val());
             });
 
             //서버에 전달할 데이터
             var paramData = {
                 jobTitle : $("#jobTitle").val(),
-                introduce : $('#introduce').val(),
                 jobGender : $('input[name="jobGender"]:checked').val(),
-                jobDays: checkedValues,
                 jobAge : $('input[name="jobAge"]:checked').val(),
                 career : $('input[name="career"]:checked').val(),
+                jobDays: checkedValues.map(function(value) {
+                            return {day: value}
+                        }),
                 jobTime : $('input[name="jobTime"]:checked').val(),
+                introduce : $('#introduce').val(),
             }
 
              //JSON -> 문자열 변경(ajax는 전달하는 데이터를 문자열로 만들어야한다)
              var param = JSON.stringify(paramData);
+
+             jobId = $('#id').val()
+
+              // ★ 헤더에 있는 토큰 값을 가지고 온다( 반드시 같이 전송해야함 )
+        	        var token = $("meta[name='_csrf']").attr("content");
+			        var header = $("meta[name='_csrf_header']").attr("content");
 
             // AJAX 요청을 통해 서버로 선택된 값들을 전송
             $.ajax({
@@ -233,11 +230,11 @@
 				},
                 success: function(response) {
                     // 요청이 성공했을 때의 처리
-                    location.href = "/jobpost/jobList";
+                    location.href = "/jobPost/jobList";
                 },
                 error: function(xhr, status, error) {
                     // 요청이 실패했을 때의 처리
-                    console.error('Error:', error);
+                    alert(xhr.responseText);
                 }
             });
         }

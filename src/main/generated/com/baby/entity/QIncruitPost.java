@@ -37,6 +37,8 @@ public class QIncruitPost extends EntityPathBase<IncruitPost> {
 
     public final EnumPath<com.baby.constant.IncruitAge> incruitAge = createEnum("incruitAge", com.baby.constant.IncruitAge.class);
 
+    public final ListPath<IncruitDay, QIncruitDay> incruitDays = this.<IncruitDay, QIncruitDay>createList("incruitDays", IncruitDay.class, QIncruitDay.class, PathInits.DIRECT2);
+
     public final EnumPath<com.baby.constant.IncruitGender> incruitGender = createEnum("incruitGender", com.baby.constant.IncruitGender.class);
 
     public final NumberPath<Integer> incruitMoney = createNumber("incruitMoney", Integer.class);
@@ -44,6 +46,10 @@ public class QIncruitPost extends EntityPathBase<IncruitPost> {
     public final NumberPath<Integer> incruitTime = createNumber("incruitTime", Integer.class);
 
     public final StringPath incruitTitle = createString("incruitTitle");
+
+    public final EnumPath<com.baby.constant.JobAge> jobAge = createEnum("jobAge", com.baby.constant.JobAge.class);
+
+    public final EnumPath<com.baby.constant.JobGender> jobGender = createEnum("jobGender", com.baby.constant.JobGender.class);
 
     public final EnumPath<com.baby.constant.Location> location = createEnum("location", com.baby.constant.Location.class);
 
@@ -56,8 +62,6 @@ public class QIncruitPost extends EntityPathBase<IncruitPost> {
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> regDate = _super.regDate;
-
-    public final EnumPath<com.baby.constant.Tip> tip = createEnum("tip", com.baby.constant.Tip.class);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updateDate = _super.updateDate;
