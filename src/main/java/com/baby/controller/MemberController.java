@@ -55,7 +55,7 @@ public class MemberController {
         return "redirect:/"; // 회원가입 완료 후 메인페이지로 이동
     }
 
-    @GetMapping(value = "members/login/error")
+    @GetMapping(value = "/members/login/error")
     public String loginError(Model model) {
         //유효성 체크를 위해서 memberFormDto 객체를 매핑하기 위해 전달
         model.addAttribute("loginErrorMsg", "아이디 또는 비밀번호를 확인해주세요.");
